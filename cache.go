@@ -12,7 +12,7 @@ var ring *redis.Ring
 var codec *cache.Codec
 
 //InitCacheWithMapAddrs with ring of redis server
-func InitCacheWithMapAddrs(m map[string]string) {
+func InitCacheWithMapAddrs(redisRingMap map[string]string, password string, db int) {
 	/*
 		 map[string]string{
 				"server1": ":6379",
@@ -21,7 +21,9 @@ func InitCacheWithMapAddrs(m map[string]string) {
 	*/
 
 	ring = redis.NewRing(&redis.RingOptions{
-		Addrs: m,
+		Addrs:    redisRingMap,
+		Password: password,
+		DB:       db,
 	})
 
 	codec = &cache.Codec{
