@@ -1,4 +1,4 @@
-package pubsub
+package redisWrapper
 
 import (
 	"log"
@@ -19,12 +19,12 @@ type Subscriber struct {
 type processFunc func(string, string)
 
 //NewSubscriber atom
-func NewSubscriber(channel string, fn processFunc) (*Subscriber, error) {
+func NewSubscriber(channel string, fn processFunc, pubSub *redis.PubSub) (*Subscriber, error) {
 	var err error
 	// TODO Timeout param?
 
 	s := Subscriber{
-		pubsub:   Service.client.PubSub(),
+		pubsub:   pubSub,
 		channel:  channel,
 		callback: fn,
 	}
@@ -77,9 +77,7 @@ func (s *Subscriber) listen() error {
 		case *redis.Message:
 			channel = m.Channel
 			payload = m.Payload
-		case *redis.PMessage:
-			channel = m.Channel
-			payload = m.Payload
+
 		}
 
 		// Process the message

@@ -1,4 +1,4 @@
-package pubsub
+package redisWrapper
 
 import (
 	"encoding/json"
@@ -14,15 +14,9 @@ type PubSub struct {
 //Service PubSub globall ival
 var Service *PubSub
 
-func init() {
-	var client *redis.Client
-	client = redis.NewTCPClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
-		PoolSize: 10,
-	})
-	Service = &PubSub{client}
+//InitPubSub Service before use , call after connect to redis successful
+func InitPubSub() {
+	Service = &PubSub{RedisClient()}
 }
 
 //PublishString to redis pubsub
