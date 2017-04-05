@@ -34,11 +34,6 @@ func DisconnectToRedis() error {
 	return client.Close()
 }
 
-//PublishMessage to pubsub channel
-func PublishMessage(message, channel string) (int64, error) {
-	return client.Publish(channel, message).Result()
-}
-
 //GetValuedForKey atom
 func GetValuedForKey(key string) (interface{}, error) {
 	fmt.Println("GetValuedForKey ", key)
@@ -55,4 +50,9 @@ func SetValuedForKey(value, key string) error {
 func AddValueToList(value, key string) error {
 	fmt.Println("AddValueToList ", key)
 	return client.LPush(key, value).Err()
+}
+
+//LengthOfList automatically
+func LengthOfList(key string) (int64, error) {
+	return client.LLen(key).Result()
 }
