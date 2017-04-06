@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/go-redis/cache"
+	"github.com/go-redis/cache/lrucache"
 	"github.com/go-redis/redis"
 	"gopkg.in/vmihailenco/msgpack.v2"
 )
@@ -35,6 +36,8 @@ func InitCacheWithMapAddrs(redisRingMap map[string]string, password string, db i
 			return msgpack.Unmarshal(b, v)
 		},
 	}
+
+	codec.LocalCache = lrucache.New(time.Minute, 1000)
 }
 
 //DestroyCache before close server

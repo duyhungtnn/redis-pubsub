@@ -1,6 +1,7 @@
 package redisWrapper
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -34,14 +35,9 @@ func DisconnectToRedis() error {
 	return client.Close()
 }
 
-//PublishMessage to pubsub channel
-func PublishMessage(message, channel string) (int64, error) {
-	return client.Publish(channel, message).Result()
-}
-
 //GetValuedForKey atom
 func GetValuedForKey(key string) (interface{}, error) {
-	fmt.Println("GetValuedForKey ", key)
+	fmt.Println("GetValuedForKey ", key, client, RedisClient())
 	return client.Get(key).Result()
 }
 
@@ -60,4 +56,30 @@ func AddValueToList(value, key string) error {
 //LengthOfList automatically
 func LengthOfList(key string) (int64, error) {
 	return client.LLen(key).Result()
+}
+
+//PublishMessage to pubsub channel
+func PublishMessage(message, channel string) (int64, error) {
+	return client.Publish(channel, message).Result()
+}
+
+//Publish interface{} to redis pubsub
+func Publish(channel string, message interface{}) (int64, error) {
+	// TODO reflect if interface{} type is string, Publish as-is
+	jsonBytes, err := json.Marshal(message)
+	if err != nil {
+		panic(err)
+	}
+	messageString := string(jsonBytes)
+	return client.Publish(channel, messageString).Result()
+}
+
+//SubscriberToChannel atom
+func SubscriberToChannel(channel string) (*redis.PubSub, error) {
+	return client.Subscribe(channel)
+}
+
+//SubscriberToPChannel atom
+func SubscriberToPChannel(pchannel string) (*redis.PubSub, error) {
+	return client.PSubscribe(pchannel)
 }
