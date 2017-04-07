@@ -56,6 +56,11 @@ func SaveObjectToCache(obj interface{}, key string, expiration time.Duration) er
 	})
 }
 
+//RemoveObjectFromCache method to remove
+func RemoveObjectFromCache(key string) error {
+	return codec.Delete(key)
+}
+
 //GetObjectFromCache method to get object from cache
 func GetObjectFromCache(key string, obj interface{}) error {
 	return codec.Get(key, &obj)
