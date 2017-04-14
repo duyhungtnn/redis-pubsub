@@ -12,8 +12,8 @@ import (
 var ring *redis.Ring
 var codec *cache.Codec
 
-//InitCacheWithMapAddrs with ring of redis server
-func InitCacheWithMapAddrs(redisRingMap map[string]string, password string, db int) {
+//InitCacheWithOptions atom
+func InitCacheWithOptions(redisRingMap map[string]string, password string, db int, uselocalCache bool, cacheExpiration time.Duration, cacheMaxLen int) {
 	/*
 		 map[string]string{
 				"server1": ":6379",
@@ -37,7 +37,14 @@ func InitCacheWithMapAddrs(redisRingMap map[string]string, password string, db i
 		},
 	}
 
-	codec.LocalCache = lrucache.New(time.Minute, 1000)
+	if uselocalCache {
+		codec.LocalCache = lrucache.New(cacheExpiration, cacheMaxLen)
+	}
+}
+
+//InitCacheWithMapAddrs with ring of redis server
+func InitCacheWithMapAddrs(redisRingMap map[string]string, password string, db int) {
+	InitCacheWithOptions(redisRingMap, password, db, false, 0, 0)
 }
 
 //DestroyCache before close server
