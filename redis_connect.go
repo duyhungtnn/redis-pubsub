@@ -76,7 +76,10 @@ func Publish(channel string, message interface{}) (int64, error) {
 
 //SubscriberToChannel atom
 func SubscriberToChannel(channel string) (*redis.PubSub, error) {
-	return client.Subscribe(channel), nil
+	if len(channel) > 0 {
+		return client.Subscribe(channel), nil
+	}
+	return client.Subscribe(), nil
 }
 
 //SubscriberToPChannel atom
