@@ -16,18 +16,23 @@ func RedisClient() *redis.Client {
 }
 
 //ConnectToRedis need call before use redis
-func ConnectToRedis() error {
-	redisAddress := os.Getenv("REDIS_ADDR")
-	redisPW := os.Getenv("REDIS_PASSWORD")
-	client = redis.NewClient(&redis.Options{
-		Addr:     redisAddress,
-		Password: redisPW,
-		DB:       0,
-	})
+func ConnectToRedis(options ...int) error {
+    indexDB := 0
+    if len(options) >= 1 {
+        indexDB = options[0]
+    }
+    
+    redisAddress := os.Getenv("REDIS_ADDR")
+    redisPW := os.Getenv("REDIS_PASSWORD")
+    client = redis.NewClient(&redis.Options{
+        Addr:     redisAddress,
+        Password: redisPW,
+        DB:       indexDB,
+    })
 
-	pong, err := client.Ping().Result()
-	fmt.Println(pong, err)
-	return err
+    pong, err := client.Ping().Result()
+    fmt.Println(pong, err)
+    return err
 }
 
 //DisconnectToRedis call when server close
