@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/go-redis/redis"
 )
@@ -49,6 +50,10 @@ func GetValuedForKey(key string) (interface{}, error) {
 //SetValuedForKey atom
 func SetValuedForKey(value, key string) error {
 	fmt.Println("SetValuedForKey ", key)
+	const layout = "Monday, 02 Jan 2006 15:04:05.000000 MST"
+	t := time.Now()
+	timeAfterFormat := t.UTC().Format(layout)
+	client.Set(key+"::time", timeAfterFormat, 0)
 	return client.Set(key, value, 0).Err()
 }
 
